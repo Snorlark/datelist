@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   DATELIST design tokens — see CLAUDE.md before changing.
+   A clean Notion page with a scrapbook stuck on top.
+------------------------------------------------------------------- */
+@theme {
+  --color-page: #fbfbf9;
+  --color-card: #ffffff;
+  --color-sage: #f3f4ee;
+  --color-ink: #1c1c1a;
+  --color-muted: #8e8e86;
+  --color-faint: #bdbdb5;
+  --color-line: #ebebe5;
+  --color-matcha: #cfe3a3;
+  --color-coral: #e06a5f;
+  --color-lime: #dcf26b;
+  --color-violet: #8a7cf2;
+  --color-tape: #ece5c4;
+  /* photo paper, and text that sits on the lime marker */
+  --color-print: #ffffff;
+  /* the 3D balloon title's foil colour */
+  --color-balloon: #93cf7c;
+  --color-onlime: #1c1c1a;
+  /* the two cursor colours: who saved what */
+  --color-lark: #2fb86e;
+  --color-sophia: #e84fc6;
+
+  --font-serif: "STIX Two Text", "Times New Roman", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-type: "Courier Prime", "Courier New", monospace;
+  --font-round: "Fredoka", "Nunito", ui-rounded, system-ui, sans-serif;
+
+  --text-title: 2.25rem;
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.01em;
+  --text-heading: 1.5rem;
+  --text-heading--line-height: 1.2;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.4;
+
+  --radius-card: 1rem;
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------
+   Themes. Each one re-points the same tokens, so the whole site follows.
+   Picked in ThemePicker, stored per browser, applied before paint.
+------------------------------------------------------------------- */
+[data-theme="sakura"] {
+  --color-page: #fcfafa; --color-card: #ffffff; --color-sage: #f7eef1;
+  --color-ink: #2a1f24; --color-muted: #9a8a90; --color-faint: #cdbfc4; --color-line: #f0e4e8;
+  --color-matcha: #f6d3dc; --color-coral: #c2577a; --color-lime: #f3c6e8; --color-onlime: #2a1f24;
+  --color-tape: #f2dce3; --color-violet: #b07cf2; --color-balloon: #f397b8;
+}
+[data-theme="sky"] {
+  --color-page: #fafbfd; --color-card: #ffffff; --color-sage: #eff4f9;
+  --color-ink: #1b2433; --color-muted: #8590a0; --color-faint: #bcc5d1; --color-line: #e3eaf2;
+  --color-matcha: #cfe2f3; --color-coral: #3e6fb0; --color-lime: #ffe98a; --color-onlime: #1b2433;
+  --color-tape: #e8eef5; --color-balloon: #82baf0;
+}
+[data-theme="butter"] {
+  --color-page: #fdfbf5; --color-card: #ffffff; --color-sage: #f7f2e3;
+  --color-ink: #2b2418; --color-muted: #978d7b; --color-faint: #cbc2ae; --color-line: #efe8d6;
+  --color-matcha: #f7e3a1; --color-coral: #d9573b; --color-lime: #ffc9a8; --color-onlime: #2b2418;
+  --color-tape: #f1e6c2; --color-balloon: #f5c443;
+}
+[data-theme="night"] {
+  color-scheme: dark;
+  --color-page: #161715; --color-card: #1f201d; --color-sage: #232521;
+  --color-ink: #edede6; --color-muted: #9a9a92; --color-faint: #5d5e58; --color-line: #2e302b;
+  --color-matcha: #3c4a2c; --color-coral: #f08a7e; --color-lime: #c8e35a; --color-onlime: #161715;
+  --color-tape: #6b6550; --color-print: #ecebe5; --color-violet: #a99cff; --color-balloon: #c8e35a;
+}
+
+@layer base {
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  html {
+    background: var(--color-page);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    min-height: 100dvh;
+    background: var(--color-page);
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-lime);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  h1, h2, h3 {
+    font-weight: 400;
+  }
+  button {
+    cursor: pointer;
+  }
+}
+
+/* the page container: wide on desktop, comfortable on phones */
+@utility content {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (min-width: 64rem) {
+    padding-inline: clamp(3.5rem, 5vw, 4.5rem);
+  }
+}
+
+/* puffy CSS lettering — the 3D balloon title's stand-in (and its first paint) */
+@utility balloon-text {
+  color: var(--color-balloon);
+  font-family: var(--font-round);
+  font-weight: 700;
+  text-shadow:
+    0 -0.02em 0 color-mix(in oklab, var(--color-balloon), white 35%),
+    0 0.03em 0 color-mix(in oklab, var(--color-balloon), black 12%),
+    0 0.06em 0 color-mix(in oklab, var(--color-balloon), black 22%),
+    0 0.14em 0.18em rgb(0 0 0 / 0.12);
+}
+
+/* flat chrome lettering */
+@utility chrome {
+  background: linear-gradient(180deg, #d9d9d4 0%, #f7f7f4 28%, #8d8d87 52%, #e9e9e4 70%, #a3a39c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.18)) drop-shadow(0 6px 10px rgb(0 0 0 / 0.08));
+}
+
+/* a lime marker behind one key line, like the Sundays highlight */
+@utility highlight {
+  background: var(--color-lime);
+  color: var(--color-onlime);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.18em;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* sheets slide up from the thumb; on desktop they rise a little */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@utility sheet-up {
+  animation: sheet-up 0.42s var(--ease-soft) both;
+  @media (min-width: 64rem) {
+    animation-name: rise-in;
+    animation-duration: 0.3s;
+  }
+}
+@utility fade-in {
+  animation: fade-in 0.25s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   First-open splash (components/shell/Splash.tsx) and the page loader
+------------------------------------------------------------------- */
+.splash {
+  animation: splash-lift 0.55s cubic-bezier(0.65, 0, 0.35, 1) 1.35s forwards;
+}
+.splash-seen .splash {
+  display: none;
+}
+.splash-balloon {
+  transform-origin: 50% 90%;
+  animation: balloon-inflate 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both, balloon-bob 2.4s ease-in-out 0.9s infinite;
+}
+.splash-word {
+  animation: word-rise 0.5s var(--ease-soft) 0.55s both;
+}
+@keyframes splash-lift {
+  to { transform: translateY(-105%); visibility: hidden; }
+}
+@keyframes balloon-inflate {
+  from { transform: scale(0.08); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes balloon-bob {
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+@keyframes word-rise {
+  from { transform: translateY(12px); opacity: 0; }
+}
+
+/* paw prints walking across, one after another */
+.paw-walk > * {
+  opacity: 0;
+  animation: paw-step 1.6s ease-in-out infinite;
+}
+.paw-walk > :nth-child(2) { animation-delay: 0.2s; }
+.paw-walk > :nth-child(3) { animation-delay: 0.4s; }
+.paw-walk > :nth-child(4) { animation-delay: 0.6s; }
+@keyframes paw-step {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  25%, 60% { opacity: 1; transform: scale(1); }
+}
